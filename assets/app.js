@@ -17,8 +17,8 @@ $(document).ready( function() {
 		'Taylor Swift'
 	];
 
-	var results;
-	var person;
+	var gifURL;
+	var gifStillURL;
 
 	for (var i=0; i < topics.length; i++){
 		var newBtn = $('<button class="btn btn-info btn-sm celeb-btn">' + topics[i] + '</button>');
@@ -30,7 +30,7 @@ $(document).ready( function() {
 	$('body').on('click', '.celeb-btn', function(e) {
 		e.preventDefault();
 
-		person = $(this).attr('data-person');
+		var person = $(this).attr('data-person');
 		console.log(person);
 
 		var queryURL = "http://api.giphy.com/v1/gifs/search?q=" +
@@ -41,7 +41,7 @@ $(document).ready( function() {
         	method: 'GET'
         })
         .done(function(response) {
-        	results = response.data;
+        	var results = response.data;
         	
         	$('.gifsDiv').empty();
 
@@ -52,16 +52,37 @@ $(document).ready( function() {
 
 	            var h4 = $('<h4>').text('Rating: ' + rating);
 
-	            var personImage = $('<img>');
-	            personImage.attr('src', results[i].images.fixed_height.url);
+	            var personGif = $('<img>');
+	            personGif.attr('src', results[i].images.fixed_height.url);
+	            personGif.attr('class', 'gif');
+	            personGif.attr('data-state', 'animate');
+	            personGif.attr('data-animate', results[i].images.fixed_height.url);
+	            personGif.attr('data-still', results[i].images.fixed_height_still.url);
 
 	            gifDiv.append(h4);
-	            gifDiv.append(personImage);
+	            gifDiv.append(personGif);
 
 	            $('.gifsDiv').prepend(gifDiv);
 	        }
         })
 	});
+
+	$(document).on('click', '.gif', function() {
+		var state = $(this).attr('data-state');
+      	console.log(state);
+
+      	var dataAnimateURL = $(this).attr('data-animate');
+      	var dataStillURL = $(this).attr('data-still');
+
+	    if (state === 'animate') {
+	    	$(this).attr('src', dataStillURL);
+	        $(this).attr('data-state', 'still');
+	    }
+	    else {
+	        $(this).attr('src', dataAnimateURL);
+	        $(this).attr('data-state', 'animate');
+	    }
+	})
 
 	$('.submit-btn').on('click', function () {
 		var newCelebName = $('input').val().toLowerCase().replace(/\s/g, '');
@@ -73,24 +94,4 @@ $(document).ready( function() {
 		newBtn.attr('data-person', newCelebName);
 		$('.buttonsDiv').append(newBtn);
 	});
-
-	// function addGifs() {
-	// 	$('.gifsDiv').empty();
-
- //       	for (var i = 0; i < results.length; i++) {
- //            var gifDiv = $('<div>');
-
- //            var rating = results[i].rating;
-
- //            var h4 = $('<h4>').text('Rating: ' + rating);
-
- //            var personImage = $('<img>');
- //            personImage.attr('src', results[i].images.fixed_height.url);
-
- //            gifDiv.append(h4);
- //            gifDiv.append(personImage);
-
- //            $('.gifsDiv').prepend(gifDiv);
-	// 	}
-	// }
 });
