@@ -33,6 +33,8 @@ $(document).ready( function() {
 	$('body').on('click', '.celeb-btn', function(e) {
 		e.preventDefault();
 
+		$('#gifInstructions').text('Click on the image to play or pause the gif!').css('font-weight', 'bold');
+
 		var person = $(this).attr('data-person');
 		console.log(person);
 
